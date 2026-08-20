@@ -21,7 +21,8 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force",
-    "prisma:validate": "prisma validate"
+    "prisma:validate": "prisma validate",
+    "start:prod": "npx prisma migrate deploy && concurrently -n api,worker \"npm run start -w @acl/api\" \"npm run start -w @acl/worker\""
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

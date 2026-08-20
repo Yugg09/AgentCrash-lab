@@ -1,0 +1,20 @@
+# Free-tier deploy: one Render web service + Neon Postgres + Upstash Redis.
+# See DEPLOY.md for setup steps.
+services:
+  - type: web
+    name: agentcrashlab
+    runtime: node
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build -w @acl/web
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash

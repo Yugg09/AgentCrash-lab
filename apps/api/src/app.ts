@@ -1,3 +1,5 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import express from "express";
 import cors from "cors";
 import { getLlmService } from "@acl/llm";
@@ -28,6 +30,16 @@ export function createApp() {
   app.use("/api/failures", failuresRouter);
   app.use("/api/executions", executionsRouter);
   app.use("/api", reliabilityRouter);
+
+  if (process.env.NODE_ENV === "production") {
+    const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+    const webDist = path.join(root, "apps/web/dist");
+    app.use(express.static(webDist));
+    app.get("*", (req, res, next) => {
+      if (req.path.startsWith("/api")) return next();
+      res.sendFile(path.join(webDist, "index.html"), (err) => (err ? next(err) : undefined));
+    });
+  }
 
   app.use(errorHandler);
   return app;
