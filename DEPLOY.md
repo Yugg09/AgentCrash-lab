@@ -38,7 +38,7 @@ You get **one live URL** — the API serves the built React app and `/api/*` on 
 | Variable | Value |
 | --- | --- |
 | `DATABASE_URL` | Neon connection string |
-| `REDIS_URL` | Upstash Redis URL |
+| `REDIS_URL` | Upstash **Redis** URL (`rediss://...`), not the REST API URL |
 | `GEMINI_API_KEY` | Optional — demo works without it (local fallback) |
 
 5. Click **Apply** and wait for the first deploy (~5–10 min)
@@ -86,7 +86,7 @@ Add `GEMINI_API_KEY` in Render env vars for LLM-powered scenario generation. Wit
 
 | Problem | Fix |
 | --- | --- |
-| Test runs stuck on **queued** | Worker not running — check Render logs for `AgentCrashLab worker ready` |
+| Test runs stuck on **queued** | Check `/api/health` — `redis` must be `true`. Verify `REDIS_URL` is the Upstash **Redis** URL (`rediss://...`). Redeploy after fixing. |
 | Empty dashboard | Redeploy (auto-seed) or run `DATABASE_URL=... npm run db:seed` locally |
 | 500 on API | Check `DATABASE_URL` and `REDIS_URL` in Render env vars |
 | Slow first load | Normal on Render free tier — service woke from sleep |

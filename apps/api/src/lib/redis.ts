@@ -14,7 +14,3 @@ export function createRedisConnection() {
   });
   return client;
 }
-
-export function redisConnection() {
-  return createRedisConnection();
-}

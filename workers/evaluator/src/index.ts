@@ -19,6 +19,14 @@ worker.on("ready", () => {
   console.log("AgentCrashLab worker ready");
 });
 
+worker.on("error", (err) => {
+  console.error("Worker error:", err.message);
+});
+
+connection.on("connect", () => {
+  console.log("Worker connected to Redis");
+});
+
 worker.on("failed", (job, err) => {
   console.error("Job failed", job?.id, err.message);
 });
