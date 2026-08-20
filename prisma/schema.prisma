@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+  id          String         @id @default(uuid())
+  name        String
+  description String
+  goal        String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  versions    AgentVersion[]
+}
+
+model AgentVersion {
+  id             String       @id @default(uuid())
+  agentId        String
+  agent          Agent        @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  version        String
+  systemPrompt   String
+  configuration  Json         @default("{}")
+  createdAt      DateTime     @default(now())
+  tools          Tool[]
+  safetyRules    SafetyRule[]
+  scenarios      Scenario[]
+  testRuns       TestRun[]
+
+  @@unique([agentId, version])
+  @@index([agentId])
+}
+
+model Tool {
+  id             String       @id @default(uuid())
+  agentVersionId String
+  agentVersion   AgentVersion @relation(fields: [agentVersionId], references: [id], onDelete: Cascade)
+  name           String
+  description    String
+  inputSchema    Json
+  riskLevel      String
+
+  @@index([agentVersionId])
+}
+
+model SafetyRule {
+  id             String       @id @default(uuid())
+  agentVersionId String
+  agentVersion   AgentVersion @relation(fields: [agentVersionId], references: [id], onDelete: Cascade)
+  rule           String
+  category       String
+  severity       String
+
+  @@index([agentVersionId])
+}
+
+model Scenario {
+  id               String       @id @default(uuid())
+  agentVersionId   String
+  agentVersion     AgentVersion @relation(fields: [agentVersionId], references: [id], onDelete: Cascade)
+  category         String
+  prompt           String
+  expectedBehavior String
+  source           String
+  parentScenarioId String?
+  parent           Scenario?    @relation("ScenarioMutations", fields: [parentScenarioId], references: [id])
+  mutations        Scenario[]   @relation("ScenarioMutations")
+  createdAt        DateTime     @default(now())
+  executions       Execution[]
+
+  @@index([agentVersionId])
+  @@index([parentScenarioId])
+}
+
+model TestRun {
+  id             String       @id @default(uuid())
+  agentVersionId String
+  agentVersion   AgentVersion @relation(fields: [agentVersionId], references: [id], onDelete: Cascade)
+  status         String
+  kind           String       @default("standard")
+  totalScenarios Int          @default(0)
+  passed         Int          @default(0)
+  failed         Int          @default(0)
+  metadata       Json         @default("{}")
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  executions     Execution[]
+
+  @@index([agentVersionId])
+  @@index([status])
+}
+
+model Execution {
+  id             String     @id @default(uuid())
+  testRunId      String
+  testRun        TestRun    @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  scenarioId     String
+  scenario       Scenario   @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  status         String
+  finalResponse  String?
+  executionTrace Json
+  durationMs     Int?
+  createdAt      DateTime   @default(now())
+  failure        Failure?
+  evaluation     Evaluation?
+
+  @@index([testRunId])
+  @@index([scenarioId])
+}
+
+model Failure {
+  id               String    @id @default(uuid())
+  executionId      String    @unique
+  execution        Execution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  category         String
+  severity         String
+  title            String
+  trigger          String
+  expectedBehavior String
+  observedBehavior String
+  affectedTool     String?
+  reproducibility  Float?
+  evidence         Json
+  remediation      String
+  createdAt        DateTime  @default(now())
+}
+
+model Evaluation {
+  id               String    @id @default(uuid())
+  executionId      String    @unique
+  execution        Execution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  safetyScore      Float
+  goalScore        Float
+  toolScore        Float
+  recoveryScore    Float
+  instructionScore Float
+  overallScore     Float
+  passed           Boolean
+  evaluatorVersion String
+  reasoning        String
+  llmUsed          Boolean   @default(false)
+}
