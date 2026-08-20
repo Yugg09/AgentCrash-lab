@@ -45,18 +45,23 @@ You get **one live URL** — the API serves the built React app and `/api/*` on 
 
 ---
 
-## 4. Seed the database (once)
+## 4. Seed the database
 
-After the first successful deploy:
+**Render free tier has no Shell.** Use one of these:
 
-1. Render dashboard → your service → **Shell**
-2. Run:
+### Option A — Automatic (recommended)
+
+Push the latest code and redeploy. On first start, the app detects an empty database and runs `db:seed` automatically.
+
+### Option B — Seed from your laptop
+
+Copy `DATABASE_URL` from Render → **Environment** (same value as Neon), then run locally:
 
 ```bash
-npm run db:seed
+DATABASE_URL="postgresql://..." npm run db:seed
 ```
 
-This loads the Customer Support Agent, scenarios, and demo data. **Only run once** — re-running wipes existing runs/failures.
+Only run this once — re-running wipes existing runs and failures.
 
 ---
 
@@ -82,7 +87,7 @@ Add `GEMINI_API_KEY` in Render env vars for LLM-powered scenario generation. Wit
 | Problem | Fix |
 | --- | --- |
 | Test runs stuck on **queued** | Worker not running — check Render logs for `AgentCrashLab worker ready` |
-| Empty dashboard | Run `npm run db:seed` in Render Shell |
+| Empty dashboard | Redeploy (auto-seed) or run `DATABASE_URL=... npm run db:seed` locally |
 | 500 on API | Check `DATABASE_URL` and `REDIS_URL` in Render env vars |
 | Slow first load | Normal on Render free tier — service woke from sleep |
 
