@@ -19,6 +19,7 @@ export function createApp() {
 
   app.get("/api/health", async (_req, res) => {
     let redisOk = false;
+    const redisConfigured = Boolean(process.env.REDIS_URL);
     try {
       const pong = await getRedis().ping();
       redisOk = pong === "PONG";
@@ -29,6 +30,7 @@ export function createApp() {
       ok: true,
       service: "agentcrashlab-api",
       redis: redisOk,
+      redisConfigured,
       llm: getLlmService().status(),
     });
   });
