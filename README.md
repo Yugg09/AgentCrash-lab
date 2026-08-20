@@ -2,7 +2,6 @@
 
 **Live demo:** [agentcrash-lab.onrender.com](https://agentcrash-lab.onrender.com)
 
-Happy-path tests make agents look fine. Then someone asks for a refund without an order ID and your agent sends $500 anyway.
 
 AgentCrashLab is a small reliability lab for tool-using agents. You register an agent, throw adversarial scenarios at it, collect execution traces, and see exactly where it breaks — refunds without confirmation, auth bypasses, prompt injection, that kind of thing.
 
