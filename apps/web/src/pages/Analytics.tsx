@@ -7,11 +7,13 @@ import {
   Metric,
   MetricRow,
   PageHeader,
+  ProgressBar,
   Section,
   chartAxis,
   chartGrid,
   chartTooltip,
 } from "../components/ui";
+import { chartTheme } from "../lib/chart-theme";
 import { api, type ReliabilityResponse } from "../lib/api";
 import { pct } from "../lib/format";
 
@@ -56,7 +58,7 @@ export function AnalyticsPage() {
         <Metric label="Failed" value={m?.failed ?? "—"} tone={m && m.failed ? "crit" : undefined} />
         <Metric label="Critical" value={m?.critical ?? "—"} tone={m && m.critical ? "crit" : "ok"} />
       </MetricRow>
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="mt-lg grid gap-lg lg:grid-cols-2">
         <Section title="Pass rate by run">
           {trend.length ? (
             <div className="h-52">
@@ -66,7 +68,7 @@ export function AnalyticsPage() {
                   <XAxis dataKey="kind" stroke={chartAxis} fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis domain={[0, 100]} stroke={chartAxis} fontSize={12} tickLine={false} axisLine={false} width={36} />
                   <Tooltip contentStyle={chartTooltip} />
-                  <Line type="monotone" dataKey="rate" stroke="#111111" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="rate" stroke={chartTheme.accent} strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -76,23 +78,22 @@ export function AnalyticsPage() {
         </Section>
         <Section title="Failure categories">
           {(data.failureDistribution ?? []).length ? (
-            <ul className="space-y-4">
-              {data.failureDistribution.map((d) => (
-                <li key={d.category}>
-                  <div className="mb-2 flex justify-between font-mono text-[13px] text-secondary">
-                    <span>{d.category}</span>
-                    <span className="text-muted">
-                      {d.count} · {pct(d.count, distTotal)}
-                    </span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-elevate">
-                    <div
-                      className={`h-full rounded-full ${/UNSAFE/i.test(d.category) ? "bg-crit" : "bg-ink/70"}`}
-                      style={{ width: `${distTotal ? (d.count / distTotal) * 100 : 0}%` }}
-                    />
-                  </div>
-                </li>
-              ))}
+            <ul className="space-y-md">
+              {data.failureDistribution.map((d) => {
+                const p = distTotal ? (d.count / distTotal) * 100 : 0;
+                const critical = /UNSAFE|CRITICAL/i.test(d.category);
+                return (
+                  <li key={d.category}>
+                    <div className="mb-xs flex justify-between font-mono text-code text-body">
+                      <span>{d.category}</span>
+                      <span className="text-muted-soft">
+                        {d.count} · {pct(d.count, distTotal)}
+                      </span>
+                    </div>
+                    <ProgressBar value={p} critical={critical} />
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <EmptyState title="No failure categories" />

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   EmptyState,
   ErrorBanner,
+  FilterBar,
+  InlineLink,
   Loading,
   PageHeader,
   Section,
@@ -11,6 +12,7 @@ import {
   Table,
   Td,
   Th,
+  tableRowHover,
 } from "../components/ui";
 import { api, type FailureRow } from "../lib/api";
 import { formatTime, shortId } from "../lib/format";
@@ -47,7 +49,7 @@ export function FailuresPage() {
         description="Classified issues from completed executions. Filters apply to loaded results."
       />
       <ErrorBanner error={error} />
-      <div className="mb-6 flex flex-wrap gap-4 rounded-lg border border-line bg-white p-4 shadow-card">
+      <FilterBar>
         <Select label="Severity" value={severity} onChange={setSeverity}>
           <option value="ALL">All</option>
           <option value="CRITICAL">Critical</option>
@@ -63,8 +65,8 @@ export function FailuresPage() {
             </option>
           ))}
         </Select>
-        <span className="self-end pb-1 text-[13px] text-muted">{filtered.length} shown</span>
-      </div>
+        <span className="self-end pb-xs text-caption text-muted">{filtered.length} shown</span>
+      </FilterBar>
       <Section title="Detected issues" padded={false}>
         {filtered.length === 0 ? (
           <EmptyState title="No failures match these filters" />
@@ -84,25 +86,21 @@ export function FailuresPage() {
             </thead>
             <tbody>
               {filtered.map((f) => (
-                <tr key={f.id} className="transition-colors hover:bg-elevate/50">
+                <tr key={f.id} className={tableRowHover}>
                   <Td>
                     <SeverityBadge severity={f.severity} />
                   </Td>
                   <Td>
-                    <Link to={`/failures/${f.id}`} className="font-medium hover:underline">
-                      {f.title}
-                    </Link>
+                    <InlineLink to={`/failures/${f.id}`}>{f.title}</InlineLink>
                   </Td>
                   <Td>{f.execution.testRun.agentVersion.agent.name}</Td>
                   <Td mono>{f.execution.testRun.agentVersion.version}</Td>
                   <Td mono>{f.affectedTool ? `${f.affectedTool}()` : "—"}</Td>
                   <Td mono>{f.category}</Td>
                   <Td mono>
-                    <Link to={`/test-runs/${f.execution.testRun.id}`} className="hover:underline">
-                      {shortId(f.execution.testRun.id)}
-                    </Link>
+                    <InlineLink to={`/test-runs/${f.execution.testRun.id}`}>{shortId(f.execution.testRun.id)}</InlineLink>
                   </Td>
-                  <Td className="text-secondary">{formatTime(f.createdAt)}</Td>
+                  <Td className="text-muted">{formatTime(f.createdAt)}</Td>
                 </tr>
               ))}
             </tbody>

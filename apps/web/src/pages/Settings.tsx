@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PageHeader, Section } from "../components/ui";
+import { DetailRow, PageHeader, Section } from "../components/ui";
 import { api } from "../lib/api";
 
 export function SettingsPage() {
@@ -24,28 +24,27 @@ export function SettingsPage() {
         description="Runtime status from the API health endpoint. Secrets are never shown here."
       />
       <Section title="API health">
-        {error ? <p className="text-[14px] text-crit">{error}</p> : null}
+        {error ? <p className="text-body-sm text-error">{error}</p> : null}
         {health ? (
-          <dl className="grid gap-4 sm:grid-cols-2">
-            <Item k="Status" v={health.ok ? "ok" : "degraded"} />
-            <Item k="LLM provider" v={health.llm.activeProvider} mono />
-            <Item k="Gemini configured" v={health.llm.geminiConfigured ? "yes" : "no"} />
-            <Item k="Using fallback" v={health.llm.usedFallback ? "yes" : "no"} />
+          <dl className="grid gap-md sm:grid-cols-2">
+            <div className="rounded-lg border border-hairline bg-surface-soft p-md">
+              <DetailRow k="Status" v={health.ok ? "ok" : "degraded"} />
+            </div>
+            <div className="rounded-lg border border-hairline bg-surface-soft p-md">
+              <DetailRow k="LLM provider" v={health.llm.activeProvider} mono />
+            </div>
+            <div className="rounded-lg border border-hairline bg-surface-soft p-md">
+              <DetailRow k="Gemini configured" v={health.llm.geminiConfigured ? "yes" : "no"} />
+            </div>
+            <div className="rounded-lg border border-hairline bg-surface-soft p-md">
+              <DetailRow k="Using fallback" v={health.llm.usedFallback ? "yes" : "no"} />
+            </div>
           </dl>
         ) : (
-          <p className="text-[14px] text-secondary">Checking…</p>
+          <p className="text-body-sm text-body">Checking…</p>
         )}
       </Section>
-      <p className="mt-6 text-[13px] text-muted">Sandbox tools only. No real refunds, email, or host commands.</p>
-    </div>
-  );
-}
-
-function Item({ k, v, mono }: { k: string; v: string; mono?: boolean }) {
-  return (
-    <div className="rounded-lg border border-line bg-elevate p-4">
-      <dt className="text-[12px] font-medium text-muted">{k}</dt>
-      <dd className={`mt-1 text-[14px] ${mono ? "font-mono text-secondary" : "font-medium text-ink"}`}>{v}</dd>
+      <p className="mt-lg text-caption text-muted">Sandbox tools only. No real refunds, email, or host commands.</p>
     </div>
   );
 }

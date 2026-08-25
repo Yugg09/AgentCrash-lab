@@ -1,7 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Timeline } from "../components/Timeline";
-import { Button, ErrorBanner, Loading, Mono, PageHeader, Section, SeverityBadge } from "../components/ui";
+import {
+  Button,
+  CodeWindow,
+  DarkSection,
+  DetailRow,
+  ErrorBanner,
+  Loading,
+  Mono,
+  PageHeader,
+  Section,
+  SeverityBadge,
+  TextLink,
+} from "../components/ui";
 import { api, type FailureDetail } from "../lib/api";
 import { shortId } from "../lib/format";
 
@@ -45,7 +57,7 @@ export function FailureDnaPage() {
         kicker="Failure DNA"
         title={failure.title}
         description={
-          <span className="inline-flex flex-wrap items-center gap-2">
+          <span className="inline-flex flex-wrap items-center gap-xs">
             <SeverityBadge severity={failure.severity} />
             <Mono>{failure.category}</Mono>
             {failure.affectedTool ? <Mono>{failure.affectedTool}()</Mono> : null}
@@ -60,69 +72,55 @@ export function FailureDnaPage() {
       />
       <ErrorBanner error={error} />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-lg lg:grid-cols-2">
         <Section title="Incident">
-          <dl className="space-y-4 text-[14px]">
-            <Row k="Agent" v={agent?.name ?? "—"} />
-            <Row k="Version" v={version ?? "—"} mono />
-            <Row k="Scenario" v={failure.execution.scenario.prompt} />
-            <Row k="Expected" v={failure.expectedBehavior} />
-            <Row k="Observed" v={failure.observedBehavior} />
-            <Row
+          <dl className="space-y-md">
+            <DetailRow k="Agent" v={agent?.name ?? "—"} />
+            <DetailRow k="Version" v={version ?? "—"} mono />
+            <DetailRow k="Scenario" v={failure.execution.scenario.prompt} />
+            <DetailRow k="Expected" v={failure.expectedBehavior} />
+            <DetailRow k="Observed" v={failure.observedBehavior} />
+            <DetailRow
               k="Reproducibility"
               v={failure.reproducibility == null ? "Run Explore Failure to measure" : `${failure.reproducibility}%`}
             />
-            <Row k="Remediation" v={failure.remediation} />
+            <DetailRow k="Remediation" v={failure.remediation} />
           </dl>
         </Section>
         <Section title="Evaluation">
           {evaln ? (
-            <dl className="space-y-4 text-[14px]">
-              <Row k="Passed" v={String(evaln.passed)} />
-              <Row k="Overall" v={String(evaln.overallScore)} mono />
-              <Row k="Safety" v={String(evaln.safetyScore)} mono />
-              <Row k="Goal" v={String(evaln.goalScore)} mono />
-              <Row k="Tools" v={String(evaln.toolScore)} mono />
-              <Row k="Instruction" v={String(evaln.instructionScore)} mono />
-              <Row k="Recovery" v={String(evaln.recoveryScore)} mono />
-              <Row k="Reason" v={evaln.reasoning} />
-              <Row k="LLM used" v={evaln.llmUsed ? "yes" : "no"} />
+            <dl className="space-y-md">
+              <DetailRow k="Passed" v={String(evaln.passed)} />
+              <DetailRow k="Overall" v={String(evaln.overallScore)} mono />
+              <DetailRow k="Safety" v={String(evaln.safetyScore)} mono />
+              <DetailRow k="Goal" v={String(evaln.goalScore)} mono />
+              <DetailRow k="Tools" v={String(evaln.toolScore)} mono />
+              <DetailRow k="Instruction" v={String(evaln.instructionScore)} mono />
+              <DetailRow k="Recovery" v={String(evaln.recoveryScore)} mono />
+              <DetailRow k="Reason" v={evaln.reasoning} />
+              <DetailRow k="LLM used" v={evaln.llmUsed ? "yes" : "no"} />
             </dl>
           ) : (
-            <p className="text-[14px] text-secondary">No evaluation attached.</p>
+            <p className="text-body-sm text-body">No evaluation attached.</p>
           )}
         </Section>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <Section title="Execution trace">
+      <div className="mt-lg grid gap-lg lg:grid-cols-2">
+        <DarkSection title="Execution trace">
           <Timeline events={failure.execution.executionTrace} highlightUnsafe />
-          <Link
-            to={`/executions/${failure.execution.id}`}
-            className="mt-3 inline-block text-[13px] font-medium text-secondary hover:text-ink"
-          >
+          <TextLink to={`/executions/${failure.execution.id}`} className="mt-md inline-block">
             Open full execution
-          </Link>
-        </Section>
-        <Section title="Evidence">
-          <div className="mb-3 font-mono text-[13px] text-muted">
+          </TextLink>
+        </DarkSection>
+        <DarkSection title="Evidence">
+          <div className="mb-md font-mono text-code text-on-dark-soft">
             run {failure.execution.testRun?.id ? shortId(failure.execution.testRun.id) : "—"} · execution{" "}
             {shortId(failure.execution.id)}
           </div>
-          <pre className="max-h-80 overflow-auto rounded-lg bg-elevate p-4 font-mono text-[12px] leading-5 text-secondary">
-            {JSON.stringify(failure.evidence, null, 2)}
-          </pre>
-        </Section>
+          <CodeWindow>{JSON.stringify(failure.evidence, null, 2)}</CodeWindow>
+        </DarkSection>
       </div>
-    </div>
-  );
-}
-
-function Row({ k, v, mono }: { k: string; v: string; mono?: boolean }) {
-  return (
-    <div>
-      <dt className="text-[12px] font-medium text-muted">{k}</dt>
-      <dd className={`mt-1 leading-6 ${mono ? "font-mono text-[13px] text-secondary" : "text-ink"}`}>{v}</dd>
     </div>
   );
 }

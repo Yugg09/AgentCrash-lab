@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Button,
+  CodeWindow,
   ErrorBanner,
+  InlineLink,
   Loading,
+  NativeSelect,
   PageHeader,
   Section,
   StatusBadge,
   Table,
   Td,
   Th,
+  tableRowHover,
 } from "../components/ui";
 import { api, type AgentDetail, type TestRun } from "../lib/api";
 import { formatTime, shortId } from "../lib/format";
@@ -82,17 +86,13 @@ export function AgentDetailPage() {
         description={agent.description}
         actions={
           <>
-            <select
-              className="h-9 rounded-lg border border-line bg-white px-3 font-mono text-[13px]"
-              value={version.id}
-              onChange={(e) => setVersionId(e.target.value)}
-            >
+            <NativeSelect value={version.id} onChange={setVersionId}>
               {agent.versions.map((v) => (
                 <option key={v.id} value={v.id}>
                   {v.version} · {v.configuration.policy}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
             <Button variant="secondary" to={`/agents/${agent.id}/generate?versionId=${version.id}`}>
               Generate tests
             </Button>
@@ -107,7 +107,7 @@ export function AgentDetailPage() {
       />
       <ErrorBanner error={error} />
 
-      <div className="mb-6 flex flex-wrap items-center gap-3">
+      <div className="mb-lg flex flex-wrap items-center gap-sm">
         <Button disabled={busy} onClick={runCrash}>
           Run crash tests
         </Button>
@@ -115,12 +115,12 @@ export function AgentDetailPage() {
           Re-run developer suite
         </Button>
         <StatusBadge status={version.configuration.policy ?? "unknown"} />
-        <span className="font-mono text-[13px] text-muted">
+        <span className="font-mono text-code text-muted">
           {version._count.scenarios} tests · {version._count.testRuns} runs
         </span>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-lg lg:grid-cols-2">
         <Section title="Tools" padded={false}>
           <Table>
             <thead>
@@ -137,14 +137,14 @@ export function AgentDetailPage() {
                   <Td>
                     <StatusBadge status={t.riskLevel} />
                   </Td>
-                  <Td className="text-secondary">{t.description}</Td>
+                  <Td className="text-body">{t.description}</Td>
                 </tr>
               ))}
             </tbody>
           </Table>
         </Section>
         <Section title="Safety rules">
-          <ol className="list-decimal space-y-3 pl-5 text-[14px] leading-6 text-secondary">
+          <ol className="list-decimal space-y-sm pl-5 text-body-sm leading-relaxed text-body">
             {version.safetyRules.map((r) => (
               <li key={r.id}>
                 <span className="text-ink">{r.rule}</span> <StatusBadge status={r.severity} />
@@ -154,15 +154,13 @@ export function AgentDetailPage() {
         </Section>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-lg">
         <Section title="System prompt">
-          <pre className="whitespace-pre-wrap rounded-lg bg-elevate p-4 font-mono text-[13px] leading-6 text-secondary">
-            {version.systemPrompt}
-          </pre>
+          <CodeWindow>{version.systemPrompt}</CodeWindow>
         </Section>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-lg">
         <Section title="Recent runs" padded={false}>
           <Table>
             <thead>
@@ -176,11 +174,9 @@ export function AgentDetailPage() {
             </thead>
             <tbody>
               {runs.map((run) => (
-                <tr key={run.id} className="transition-colors hover:bg-elevate/50">
+                <tr key={run.id} className={tableRowHover}>
                   <Td mono>
-                    <Link to={`/test-runs/${run.id}`} className="font-medium hover:underline">
-                      {shortId(run.id)}
-                    </Link>
+                    <InlineLink to={`/test-runs/${run.id}`}>{shortId(run.id)}</InlineLink>
                   </Td>
                   <Td mono>{run.kind}</Td>
                   <Td mono>
@@ -189,7 +185,7 @@ export function AgentDetailPage() {
                   <Td>
                     <StatusBadge status={run.status} />
                   </Td>
-                  <Td className="text-secondary">{formatTime(run.startedAt ?? run.createdAt)}</Td>
+                  <Td className="text-muted">{formatTime(run.startedAt ?? run.createdAt)}</Td>
                 </tr>
               ))}
             </tbody>

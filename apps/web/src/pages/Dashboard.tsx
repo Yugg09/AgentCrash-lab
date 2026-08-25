@@ -2,21 +2,28 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import {
+  Button,
   EmptyState,
   ErrorBanner,
+  InlineLink,
   Loading,
   Metric,
   MetricRow,
   PageHeader,
+  ProgressBar,
+  ReliabilityHero,
   Section,
   SeverityBadge,
   Table,
   Td,
+  TextLink,
   Th,
   chartAxis,
   chartGrid,
   chartTooltip,
+  tableRowHover,
 } from "../components/ui";
+import { chartTheme } from "../lib/chart-theme";
 import { api, type AgentDetail, type FailureRow, type RegressionResponse, type ReliabilityResponse } from "../lib/api";
 import { formatTime, pct, shortId } from "../lib/format";
 
@@ -83,42 +90,30 @@ export function DashboardPage() {
             ? `${agent.name} · Test, evaluate, and harden AI agents against real-world failures.`
             : "Test, evaluate, and harden AI agents against real-world failures."
         }
-        actions={
-          agent ? (
-            <ButtonLink to={`/agents/${agent.id}`}>Open agent</ButtonLink>
-          ) : null
-        }
+        actions={agent ? <Button to={`/agents/${agent.id}`}>Open agent</Button> : null}
       />
       <ErrorBanner error={error} />
 
-      <div className="mb-6 rounded-lg border border-line bg-white p-6 shadow-card sm:p-8">
-        <p className="text-[13px] font-medium text-secondary">Overall reliability</p>
-        <div className="mt-3 flex flex-wrap items-end gap-8">
-          <div className="text-[56px] font-bold leading-none tracking-[-0.04em] text-ink tabular-nums">
-            {m ? `${m.overall}%` : "—"}
+      <ReliabilityHero label="Overall reliability" value={m ? `${m.overall}%` : "—"}>
+        {prevRate != null ? <div>Previous run pass rate {prevRate}%</div> : null}
+        {m ? (
+          <div>
+            {m.passed}/{m.total} tests passed · {m.failed} failed
           </div>
-          <div className="space-y-2 pb-1 text-[14px] text-secondary">
-            {prevRate != null ? <div>Previous run pass rate {prevRate}%</div> : null}
-            {m ? (
-              <div>
-                {m.passed}/{m.total} tests passed · {m.failed} failed
-              </div>
-            ) : null}
-            {m ? (
-              <div className={m.critical > 0 ? "font-medium text-crit" : "text-ok"}>
-                {m.critical} critical {m.critical === 1 ? "failure" : "failures"}
-              </div>
-            ) : null}
-            {regression ? (
-              <div>
-                {regression.from.version} → {regression.to.version}: {regression.comparison.scoreDelta > 0 ? "+" : ""}
-                {regression.comparison.scoreDelta} reliability · critical {regression.comparison.oldCritical} →{" "}
-                {regression.comparison.newCritical}
-              </div>
-            ) : null}
+        ) : null}
+        {m ? (
+          <div className={m.critical > 0 ? "font-medium text-error" : "text-success"}>
+            {m.critical} critical {m.critical === 1 ? "failure" : "failures"}
           </div>
-        </div>
-      </div>
+        ) : null}
+        {regression ? (
+          <div>
+            {regression.from.version} → {regression.to.version}: {regression.comparison.scoreDelta > 0 ? "+" : ""}
+            {regression.comparison.scoreDelta} reliability · critical {regression.comparison.oldCritical} →{" "}
+            {regression.comparison.newCritical}
+          </div>
+        ) : null}
+      </ReliabilityHero>
 
       <MetricRow>
         <Metric label="Safety" value={m?.safety ?? "—"} />
@@ -128,7 +123,7 @@ export function DashboardPage() {
         <Metric label="Recovery" value={m?.recovery ?? "—"} />
       </MetricRow>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="mt-lg grid gap-lg lg:grid-cols-2">
         <Section title="Pass rate by run">
           {trend.length ? (
             <div className="h-52">
@@ -138,7 +133,7 @@ export function DashboardPage() {
                   <XAxis dataKey="kind" stroke={chartAxis} fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis domain={[0, 100]} stroke={chartAxis} fontSize={12} tickLine={false} axisLine={false} width={36} />
                   <Tooltip contentStyle={chartTooltip} />
-                  <Line type="monotone" dataKey="passRate" stroke="#111111" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="passRate" stroke={chartTheme.accent} strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -148,24 +143,19 @@ export function DashboardPage() {
         </Section>
         <Section title="Failure distribution">
           {rel?.failureDistribution.length ? (
-            <ul className="space-y-4">
+            <ul className="space-y-md">
               {rel.failureDistribution.map((d) => {
                 const p = distTotal ? (d.count / distTotal) * 100 : 0;
                 const critical = /UNSAFE|CRITICAL/i.test(d.category);
                 return (
                   <li key={d.category}>
-                    <div className="mb-2 flex items-baseline justify-between gap-3 text-[13px]">
-                      <span className="font-mono text-secondary">{d.category}</span>
-                      <span className="text-muted">
+                    <div className="mb-xs flex items-baseline justify-between gap-sm text-caption">
+                      <span className="font-mono text-body">{d.category}</span>
+                      <span className="text-muted-soft">
                         {d.count} · {pct(d.count, distTotal)}
                       </span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-elevate">
-                      <div
-                        className={`h-full rounded-full ${critical ? "bg-crit" : "bg-ink/70"}`}
-                        style={{ width: `${p}%` }}
-                      />
-                    </div>
+                    <ProgressBar value={p} critical={critical} />
                   </li>
                 );
               })}
@@ -176,15 +166,11 @@ export function DashboardPage() {
         </Section>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-lg">
         <Section
           title="Recent failures"
           padded={false}
-          action={
-            <Link to="/failures" className="text-[13px] font-medium text-secondary hover:text-ink">
-              View all
-            </Link>
-          }
+          action={<TextLink to="/failures">View all</TextLink>}
         >
           {failures.length === 0 ? (
             <EmptyState title="No failures yet" body="Run crash tests on an agent to populate this list." />
@@ -203,24 +189,22 @@ export function DashboardPage() {
               </thead>
               <tbody>
                 {failures.slice(0, 8).map((f) => (
-                  <tr key={f.id} className="transition-colors hover:bg-elevate/50">
+                  <tr key={f.id} className={tableRowHover}>
                     <Td>
                       <SeverityBadge severity={f.severity} />
                     </Td>
                     <Td>
-                      <Link to={`/failures/${f.id}`} className="font-medium hover:underline">
-                        {f.title}
-                      </Link>
+                      <InlineLink to={`/failures/${f.id}`}>{f.title}</InlineLink>
                     </Td>
                     <Td>{f.execution.testRun.agentVersion.agent.name}</Td>
                     <Td mono>{f.affectedTool ? `${f.affectedTool}()` : "—"}</Td>
                     <Td mono>{f.category}</Td>
                     <Td mono>
-                      <Link to={`/test-runs/${f.execution.testRun.id}`} className="hover:underline">
+                      <Link to={`/test-runs/${f.execution.testRun.id}`} className="text-primary hover:text-primary-active">
                         {shortId(f.execution.testRun.id)}
                       </Link>
                     </Td>
-                    <Td className="text-secondary">{formatTime(f.createdAt)}</Td>
+                    <Td className="text-muted">{formatTime(f.createdAt)}</Td>
                   </tr>
                 ))}
               </tbody>
@@ -229,16 +213,5 @@ export function DashboardPage() {
         </Section>
       </div>
     </div>
-  );
-}
-
-function ButtonLink({ to, children }: { to: string; children: React.ReactNode }) {
-  return (
-    <Link
-      to={to}
-      className="inline-flex h-9 items-center rounded-lg bg-ink px-4 text-[14px] font-medium text-white transition-colors hover:bg-black"
-    >
-      {children}
-    </Link>
   );
 }

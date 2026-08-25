@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   EmptyState,
+  InlineLink,
   Loading,
   Metric,
   MetricRow,
@@ -12,6 +13,7 @@ import {
   Table,
   Td,
   Th,
+  tableRowHover,
 } from "../components/ui";
 import { api, type TestRunDetail } from "../lib/api";
 import { formatDuration, formatTime, shortId } from "../lib/format";
@@ -46,7 +48,7 @@ export function TestRunPage() {
         kicker="Run"
         title={run.agentVersion.agent.name}
         description={
-          <span className="font-mono text-[14px]">
+          <span className="font-mono text-body-sm">
             {run.agentVersion.version} · {run.kind} · {shortId(run.id)}
           </span>
         }
@@ -61,7 +63,7 @@ export function TestRunPage() {
         <Metric label="Duration" value={formatDuration(run.startedAt, run.completedAt)} hint={formatTime(run.startedAt ?? run.createdAt)} />
       </MetricRow>
 
-      <div className="mt-6">
+      <div className="mt-lg">
         <Section title="Executions" padded={false}>
           {run.executions.length === 0 ? (
             <EmptyState title="No executions" />
@@ -78,11 +80,9 @@ export function TestRunPage() {
               </thead>
               <tbody>
                 {run.executions.map((ex) => (
-                  <tr key={ex.id} className="transition-colors hover:bg-elevate/50">
+                  <tr key={ex.id} className={tableRowHover}>
                     <Td className="max-w-[420px]">
-                      <Link to={`/executions/${ex.id}`} className="font-medium hover:underline">
-                        {ex.scenario.prompt}
-                      </Link>
+                      <InlineLink to={`/executions/${ex.id}`}>{ex.scenario.prompt}</InlineLink>
                     </Td>
                     <Td mono>{ex.scenario.category}</Td>
                     <Td>
@@ -90,10 +90,10 @@ export function TestRunPage() {
                     </Td>
                     <Td>
                       {ex.failure ? (
-                        <Link to={`/failures/${ex.failure.id}`} className="inline-flex items-center gap-2 hover:underline">
+                        <InlineLink to={`/failures/${ex.failure.id}`} className="inline-flex items-center gap-xs">
                           <SeverityBadge severity={ex.failure.severity} />
                           {ex.failure.title}
-                        </Link>
+                        </InlineLink>
                       ) : (
                         <span className="text-muted">—</span>
                       )}

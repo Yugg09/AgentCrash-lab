@@ -1,0 +1,131 @@
+/**
+ * AgentCrashLab design tokens — aligned with DESIGN-claude.md
+ * Tailwind theme maps to these CSS custom properties.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Brand & accent */
+  --color-primary: #cc785c;
+  --color-primary-active: #a9583e;
+  --color-primary-disabled: #e6dfd8;
+  --color-accent-teal: #5db8a6;
+  --color-accent-amber: #e8a55a;
+
+  /* Surfaces */
+  --color-canvas: #faf9f5;
+  --color-surface-soft: #f5f0e8;
+  --color-surface-card: #efe9de;
+  --color-surface-cream-strong: #e8e0d2;
+  --color-surface-dark: #181715;
+  --color-surface-dark-elevated: #252320;
+  --color-surface-dark-soft: #1f1e1b;
+
+  /* Text */
+  --color-ink: #141413;
+  --color-body-strong: #252523;
+  --color-body: #3d3d3a;
+  --color-muted: #6c6a64;
+  --color-muted-soft: #8e8b82;
+  --color-on-primary: #ffffff;
+  --color-on-dark: #faf9f5;
+  --color-on-dark-soft: #a09d96;
+
+  /* Borders */
+  --color-hairline: #e6dfd8;
+  --color-hairline-soft: #ebe6df;
+
+  /* Semantic */
+  --color-success: #5db872;
+  --color-warning: #d4a017;
+  --color-error: #c64545;
+
+  /* Typography — families */
+  --font-display: "Cormorant Garamond", "Tiempos Headline", Garamond, "Times New Roman", serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Typography — display */
+  --text-display-xl-size: 64px;
+  --text-display-xl-leading: 1.05;
+  --text-display-xl-tracking: -1.5px;
+
+  --text-display-lg-size: 48px;
+  --text-display-lg-leading: 1.1;
+  --text-display-lg-tracking: -1px;
+
+  --text-display-md-size: 36px;
+  --text-display-md-leading: 1.15;
+  --text-display-md-tracking: -0.5px;
+
+  --text-display-sm-size: 28px;
+  --text-display-sm-leading: 1.2;
+  --text-display-sm-tracking: -0.3px;
+
+  /* Typography — UI */
+  --text-title-lg-size: 22px;
+  --text-title-lg-leading: 1.3;
+
+  --text-title-md-size: 18px;
+  --text-title-md-leading: 1.4;
+
+  --text-title-sm-size: 16px;
+  --text-title-sm-leading: 1.4;
+
+  --text-body-md-size: 16px;
+  --text-body-md-leading: 1.55;
+
+  --text-body-sm-size: 14px;
+  --text-body-sm-leading: 1.55;
+
+  --text-caption-size: 13px;
+  --text-caption-leading: 1.4;
+
+  --text-caption-uppercase-size: 12px;
+  --text-caption-uppercase-leading: 1.4;
+  --text-caption-uppercase-tracking: 1.5px;
+
+  --text-code-size: 14px;
+  --text-code-leading: 1.6;
+
+  --text-button-size: 14px;
+  --text-button-leading: 1;
+
+  --text-nav-size: 14px;
+  --text-nav-leading: 1.4;
+
+  /* Spacing */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  --spacing-section: 96px;
+
+  /* Border radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 9999px;
+
+  /* Elevation — color-block first; shadows used sparingly */
+  --shadow-hover: 0 1px 3px rgba(20, 20, 19, 0.08);
+  --shadow-card: 0 1px 2px rgba(20, 20, 19, 0.04);
+
+  /* Focus */
+  --focus-ring: 0 0 0 3px rgba(204, 120, 92, 0.15);
+  --focus-outline: var(--color-primary);
+
+  /* Chart (JS consumers — mirrors semantic colors) */
+  --chart-grid: var(--color-hairline);
+  --chart-axis: var(--color-muted-soft);
+  --chart-line: var(--color-ink);
+  --chart-accent: var(--color-primary);
+  --chart-tooltip-bg: var(--color-canvas);
+  --chart-tooltip-border: var(--color-hairline);
+}

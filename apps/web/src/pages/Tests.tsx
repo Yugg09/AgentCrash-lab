@@ -4,6 +4,7 @@ import {
   Button,
   EmptyState,
   ErrorBanner,
+  FilterBar,
   Input,
   Loading,
   PageHeader,
@@ -13,6 +14,7 @@ import {
   Table,
   Td,
   Th,
+  tableRowHover,
 } from "../components/ui";
 import { api, type AgentSummary, type Scenario } from "../lib/api";
 
@@ -126,13 +128,17 @@ export function TestsPage() {
       />
       <ErrorBanner error={error} />
 
-      <div className="mb-6 grid gap-4 rounded-lg border border-line bg-white p-4 shadow-card lg:grid-cols-[1fr_auto_auto_auto] lg:items-end">
+      <FilterBar className="lg:grid lg:grid-cols-[1fr_auto_auto_auto] lg:items-end">
         <Input label="Search scenarios" value={search} onChange={setSearch} placeholder="Filter by prompt, category, or source" />
-        <Select label="Agent" value={agentId} onChange={(v) => {
-          setAgentId(v);
-          const next = agents.find((a) => a.id === v);
-          setVersionId(next?.versions[0]?.id ?? "");
-        }}>
+        <Select
+          label="Agent"
+          value={agentId}
+          onChange={(v) => {
+            setAgentId(v);
+            const next = agents.find((a) => a.id === v);
+            setVersionId(next?.versions[0]?.id ?? "");
+          }}
+        >
           {agents.map((a) => (
             <option key={a.id} value={a.id}>
               {a.name}
@@ -153,9 +159,9 @@ export function TestsPage() {
           <option value="generated">generated</option>
           <option value="mutation">mutation</option>
         </Select>
-      </div>
+      </FilterBar>
 
-      <p className="mb-4 text-[13px] text-muted">
+      <p className="mb-lg text-caption text-muted">
         {counts.adversarial} adversarial · {counts.happy} developer · {counts.generated} generated · {counts.mutation}{" "}
         mutations
         {provider ? ` · provider ${provider}` : ""}
@@ -176,13 +182,13 @@ export function TestsPage() {
             </thead>
             <tbody>
               {filtered.map((s) => (
-                <tr key={s.id} className="transition-colors hover:bg-elevate/50">
+                <tr key={s.id} className={tableRowHover}>
                   <Td className="max-w-[360px]">{s.prompt}</Td>
                   <Td>
                     <StatusBadge status={s.category} />
                   </Td>
                   <Td mono>{s.source}</Td>
-                  <Td className="max-w-[300px] text-secondary">{s.expectedBehavior}</Td>
+                  <Td className="max-w-[300px] text-body">{s.expectedBehavior}</Td>
                 </tr>
               ))}
             </tbody>

@@ -14,21 +14,19 @@ export function Timeline({ events, highlightUnsafe }: { events: TraceEvent[]; hi
   return (
     <ol className="space-y-0">
       {items.map((item, i) => (
-        <li key={`${item.label}-${i}`} className="flex gap-4">
+        <li key={`${item.label}-${i}`} className="flex gap-md">
           <div className="flex w-4 flex-col items-center">
             <div
               className={`mt-2 h-2.5 w-2.5 rounded-full ${
-                item.unsafe ? "bg-crit" : item.tool ? "bg-ink" : "bg-line"
+                item.unsafe ? "bg-error" : item.tool ? "bg-primary" : "bg-hairline"
               }`}
             />
-            {i < items.length - 1 ? <div className="w-px flex-1 bg-line" /> : null}
+            {i < items.length - 1 ? <div className="w-px flex-1 bg-hairline" /> : null}
           </div>
-          <div className="min-w-0 pb-5">
-            <div className={`text-[13px] font-medium capitalize ${item.unsafe ? "text-crit" : "text-ink"}`}>
-              {item.label}
-            </div>
+          <div className="min-w-0 pb-md">
+            <div className={`text-caption capitalize ${item.unsafe ? "text-error" : "text-ink"}`}>{item.label}</div>
             {item.detail ? (
-              <pre className="mt-1.5 max-h-32 overflow-auto whitespace-pre-wrap rounded-md bg-elevate p-2 font-mono text-[12px] text-secondary">
+              <pre className="mt-xs max-h-32 overflow-auto whitespace-pre-wrap rounded-md bg-surface-dark-soft p-sm font-mono text-code text-on-dark">
                 {item.detail}
               </pre>
             ) : null}

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { EmptyState, ErrorBanner, Loading, PageHeader, Section, StatusBadge, Table, Td, Th } from "../components/ui";
+import { EmptyState, ErrorBanner, InlineLink, Loading, PageHeader, Section, StatusBadge, Table, Td, Th, tableRowHover } from "../components/ui";
 import { api, type AgentSummary, type TestRun } from "../lib/api";
 import { formatDuration, formatTime, shortId } from "../lib/format";
 
@@ -53,27 +52,25 @@ export function RunsPage() {
             </thead>
             <tbody>
               {runs.map((run) => (
-                <tr key={run.id} className="transition-colors hover:bg-elevate/50">
+                <tr key={run.id} className={tableRowHover}>
                   <Td mono>
-                    <Link to={`/test-runs/${run.id}`} className="font-medium hover:underline">
-                      {shortId(run.id)}
-                    </Link>
+                    <InlineLink to={`/test-runs/${run.id}`}>{shortId(run.id)}</InlineLink>
                   </Td>
                   <Td>{nameById.get(run.agentVersion?.agentId ?? "") ?? "—"}</Td>
                   <Td mono>{run.agentVersion?.version ?? "—"}</Td>
                   <Td mono>{run.kind}</Td>
                   <Td mono>{run.totalScenarios}</Td>
-                  <Td mono className="text-ok">
+                  <Td mono className="text-success">
                     {run.passed}
                   </Td>
-                  <Td mono className={run.failed ? "text-crit" : ""}>
+                  <Td mono className={run.failed ? "text-error" : ""}>
                     {run.failed}
                   </Td>
                   <Td mono>{formatDuration(run.startedAt, run.completedAt)}</Td>
                   <Td>
                     <StatusBadge status={run.status} />
                   </Td>
-                  <Td className="text-secondary">{formatTime(run.startedAt ?? run.createdAt)}</Td>
+                  <Td className="text-muted">{formatTime(run.startedAt ?? run.createdAt)}</Td>
                 </tr>
               ))}
             </tbody>

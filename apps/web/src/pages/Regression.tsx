@@ -79,7 +79,7 @@ export function RegressionPage() {
         }
       />
       <ErrorBanner error={error} />
-      {hint ? <p className="mb-6 text-[14px] text-secondary">{hint}</p> : null}
+      {hint ? <p className="mb-lg text-body-sm text-body">{hint}</p> : null}
 
       {c ? (
         <>
@@ -94,7 +94,7 @@ export function RegressionPage() {
             <Metric label="Critical" value={`${c.oldCritical} → ${c.newCritical}`} tone={c.newCritical === 0 ? "ok" : "crit"} />
             <Metric label="Fixed / new" value={`${c.fixed.length} / ${c.introduced.length}`} />
           </MetricRow>
-          <div className="mt-6 grid gap-6 md:grid-cols-3">
+          <div className="mt-lg grid gap-lg md:grid-cols-3">
             <Section title={`Fixed (${c.fixed.length})`}>
               <List items={c.fixed} />
             </Section>
@@ -114,13 +114,13 @@ export function RegressionPage() {
 }
 
 function List({ items }: { items: { title: string; category: string; affectedTool: string | null }[] }) {
-  if (!items.length) return <p className="text-[14px] text-secondary">None</p>;
+  if (!items.length) return <p className="text-body-sm text-body">None</p>;
   return (
-    <ul className="space-y-3 text-[14px]">
+    <ul className="space-y-md text-body-sm">
       {items.map((i, idx) => (
         <li key={`${i.title}-${idx}`}>
-          <div className="font-medium">{i.title}</div>
-          <div className="mt-1 font-mono text-[12px] text-muted">
+          <div className="font-medium text-ink">{i.title}</div>
+          <div className="mt-xxs font-mono text-code text-muted">
             {i.category}
             {i.affectedTool ? ` · ${i.affectedTool}()` : ""}
           </div>

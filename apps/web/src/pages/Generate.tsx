@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Button, ErrorBanner, PageHeader, Section, StatusBadge } from "../components/ui";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Button, ErrorBanner, PageHeader, Section, StatusBadge, TextLink } from "../components/ui";
 import { api, type Scenario } from "../lib/api";
 
 export function GeneratePage() {
@@ -68,26 +68,24 @@ export function GeneratePage() {
         }
       />
       <ErrorBanner error={error} />
-      {provider ? <p className="mb-4 font-mono text-[13px] text-muted">provider {provider}</p> : null}
-      {!versionId ? <p className="text-[14px] text-secondary">Select an agent version from Tests or Agent detail.</p> : null}
+      {provider ? <p className="mb-md font-mono text-code text-muted">provider {provider}</p> : null}
+      {!versionId ? <p className="text-body-sm text-body">Select an agent version from Tests or Agent detail.</p> : null}
       <Section title={`${scenarios.length} scenarios`}>
-        <div className="max-h-[640px] space-y-4 overflow-auto">
+        <div className="max-h-[640px] space-y-md overflow-auto">
           {scenarios.map((s) => (
-            <div key={s.id} className="border-b border-line pb-4 last:border-0">
-              <div className="mb-2 flex flex-wrap gap-2">
+            <div key={s.id} className="border-b border-hairline pb-md last:border-0">
+              <div className="mb-xs flex flex-wrap gap-xs">
                 <StatusBadge status={s.category} />
-                <span className="font-mono text-[12px] text-muted">{s.source}</span>
+                <span className="font-mono text-code text-muted">{s.source}</span>
               </div>
-              <div className="text-[14px] leading-6">{s.prompt}</div>
-              <div className="mt-2 text-[13px] text-secondary">Expected: {s.expectedBehavior}</div>
+              <div className="text-body-sm leading-relaxed text-ink">{s.prompt}</div>
+              <div className="mt-xs text-body-sm text-body">Expected: {s.expectedBehavior}</div>
             </div>
           ))}
         </div>
       </Section>
-      <p className="mt-4">
-        <Link to="/tests" className="text-[14px] font-medium text-secondary hover:text-ink">
-          Open test catalog
-        </Link>
+      <p className="mt-md">
+        <TextLink to="/tests">Open test catalog</TextLink>
       </p>
     </div>
   );

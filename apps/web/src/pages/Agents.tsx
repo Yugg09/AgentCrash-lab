@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { EmptyState, ErrorBanner, Loading, PageHeader, StatusBadge } from "../components/ui";
+import { EmptyState, ErrorBanner, FeatureCard, Loading, PageHeader, StatusBadge } from "../components/ui";
 import { api, type AgentDetail, type ReliabilityResponse, type TestRun } from "../lib/api";
 import { formatTime } from "../lib/format";
 
@@ -51,34 +50,33 @@ export function AgentsPage() {
       {rows.length === 0 ? (
         <EmptyState title="No agents" body="Seed the demo agent or create one via the API." />
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-md">
           {rows.map(({ agent, reliability, lastRun }) => (
-            <Link
-              key={agent.id}
-              to={`/agents/${agent.id}`}
-              className="block rounded-lg border border-line bg-white p-5 shadow-card transition-colors hover:border-ink/20"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-4">
+            <FeatureCard key={agent.id} to={`/agents/${agent.id}`}>
+              <div className="flex flex-wrap items-start justify-between gap-md">
                 <div>
-                  <div className="text-[18px] font-semibold tracking-[-0.02em]">{agent.name}</div>
-                  <p className="mt-2 max-w-2xl text-[14px] leading-6 text-secondary">{agent.description}</p>
+                  <div className="font-display text-title-md text-ink">{agent.name}</div>
+                  <p className="mt-xs max-w-2xl text-body-sm leading-relaxed text-body">{agent.description}</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-[32px] font-bold leading-none tabular-nums tracking-[-0.03em]">
+                  <div className="font-display text-display-sm tabular-nums leading-none text-ink">
                     {reliability?.reliability ? `${reliability.reliability.overall}%` : "—"}
                   </div>
-                  <div className="mt-1 text-[13px] text-muted">reliability</div>
+                  <div className="mt-xxs text-caption text-muted">reliability</div>
                 </div>
               </div>
-              <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-md flex flex-wrap gap-xs">
                 {agent.versions.map((v) => (
-                  <span key={v.id} className="inline-flex items-center gap-2 rounded-lg border border-line bg-elevate px-3 py-1.5">
-                    <span className="font-mono text-[13px] font-medium">{v.version}</span>
+                  <span
+                    key={v.id}
+                    className="inline-flex items-center gap-xs rounded-md border border-hairline bg-surface-soft px-sm py-xxs"
+                  >
+                    <span className="font-mono text-code">{v.version}</span>
                     <StatusBadge status={v.configuration.policy ?? "unknown"} />
                   </span>
                 ))}
               </div>
-              <div className="mt-4 flex flex-wrap gap-5 text-[13px] text-muted">
+              <div className="mt-md flex flex-wrap gap-lg text-caption text-muted-soft">
                 <span>{agent.versions.length} versions</span>
                 {lastRun ? (
                   <span>
@@ -93,7 +91,7 @@ export function AgentsPage() {
                   </span>
                 ) : null}
               </div>
-            </Link>
+            </FeatureCard>
           ))}
         </div>
       )}
