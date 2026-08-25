@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import {
   Button,
@@ -84,32 +83,35 @@ export function DashboardPage() {
     <div>
       <PageHeader
         kicker="Overview"
-        title="AI Agent Reliability, Tested."
+        title="Dashboard"
         description={
           agent
-            ? `${agent.name} · Test, evaluate, and harden AI agents against real-world failures.`
-            : "Test, evaluate, and harden AI agents against real-world failures."
+            ? `${agent.name} — reliability from your latest crash test runs.`
+            : "Register an agent and run crash tests to see reliability scores here."
         }
-        actions={agent ? <Button to={`/agents/${agent.id}`}>Open agent</Button> : null}
+        actions={agent ? <Button to={`/agents/${agent.id}`}>Open agent</Button> : <Button to="/agents">View agents</Button>}
       />
       <ErrorBanner error={error} />
 
       <ReliabilityHero label="Overall reliability" value={m ? `${m.overall}%` : "—"}>
-        {prevRate != null ? <div>Previous run pass rate {prevRate}%</div> : null}
         {m ? (
           <div>
             {m.passed}/{m.total} tests passed · {m.failed} failed
           </div>
-        ) : null}
-        {m ? (
-          <div className={m.critical > 0 ? "font-medium text-error" : "text-success"}>
+        ) : (
+          <div>No completed runs yet</div>
+        )}
+        {prevRate != null ? <div>Previous run {prevRate}% pass rate</div> : null}
+        {m && m.critical > 0 ? (
+          <div className="text-error">
             {m.critical} critical {m.critical === 1 ? "failure" : "failures"}
           </div>
         ) : null}
         {regression ? (
           <div>
-            {regression.from.version} → {regression.to.version}: {regression.comparison.scoreDelta > 0 ? "+" : ""}
-            {regression.comparison.scoreDelta} reliability · critical {regression.comparison.oldCritical} →{" "}
+            {regression.from.version} → {regression.to.version}:{" "}
+            {regression.comparison.scoreDelta > 0 ? "+" : ""}
+            {regression.comparison.scoreDelta} pts · critical {regression.comparison.oldCritical} →{" "}
             {regression.comparison.newCritical}
           </div>
         ) : null}
@@ -200,9 +202,7 @@ export function DashboardPage() {
                     <Td mono>{f.affectedTool ? `${f.affectedTool}()` : "—"}</Td>
                     <Td mono>{f.category}</Td>
                     <Td mono>
-                      <Link to={`/test-runs/${f.execution.testRun.id}`} className="text-primary hover:text-primary-active">
-                        {shortId(f.execution.testRun.id)}
-                      </Link>
+                      <InlineLink to={`/test-runs/${f.execution.testRun.id}`}>{shortId(f.execution.testRun.id)}</InlineLink>
                     </Td>
                     <Td className="text-muted">{formatTime(f.createdAt)}</Td>
                   </tr>

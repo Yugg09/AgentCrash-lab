@@ -69,7 +69,7 @@ export function AgentsPage() {
                 {agent.versions.map((v) => (
                   <span
                     key={v.id}
-                    className="inline-flex items-center gap-xs rounded-md border border-hairline bg-surface-soft px-sm py-xxs"
+                    className="inline-flex items-center gap-xs rounded-pill border border-hairline bg-surface-2 px-sm py-xxs"
                   >
                     <span className="font-mono text-code">{v.version}</span>
                     <StatusBadge status={v.configuration.policy ?? "unknown"} />

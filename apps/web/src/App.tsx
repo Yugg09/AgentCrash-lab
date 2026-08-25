@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
+import { LandingPage } from "./pages/Landing";
 import { DashboardPage } from "./pages/Dashboard";
 import { AgentsPage } from "./pages/Agents";
 import { AgentDetailPage } from "./pages/AgentDetail";
@@ -17,8 +18,9 @@ import { SettingsPage } from "./pages/Settings";
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route element={<AppShell />}>
-        <Route path="/" element={<DashboardPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/agents" element={<AgentsPage />} />
         <Route path="/agents/:id" element={<AgentDetailPage />} />
         <Route path="/agents/:id/generate" element={<GeneratePage />} />

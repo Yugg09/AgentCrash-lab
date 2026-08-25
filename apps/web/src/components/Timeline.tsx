@@ -18,7 +18,7 @@ export function Timeline({ events, highlightUnsafe }: { events: TraceEvent[]; hi
           <div className="flex w-4 flex-col items-center">
             <div
               className={`mt-2 h-2.5 w-2.5 rounded-full ${
-                item.unsafe ? "bg-error" : item.tool ? "bg-primary" : "bg-hairline"
+                item.unsafe ? "bg-error" : item.tool ? "bg-accent" : "bg-hairline"
               }`}
             />
             {i < items.length - 1 ? <div className="w-px flex-1 bg-hairline" /> : null}
@@ -26,7 +26,7 @@ export function Timeline({ events, highlightUnsafe }: { events: TraceEvent[]; hi
           <div className="min-w-0 pb-md">
             <div className={`text-caption capitalize ${item.unsafe ? "text-error" : "text-ink"}`}>{item.label}</div>
             {item.detail ? (
-              <pre className="mt-xs max-h-32 overflow-auto whitespace-pre-wrap rounded-md bg-surface-dark-soft p-sm font-mono text-code text-on-dark">
+              <pre className="mt-xs max-h-32 overflow-auto whitespace-pre-wrap rounded-md border border-hairline bg-surface-dark-soft p-sm font-mono text-code text-muted">
                 {item.detail}
               </pre>
             ) : null}

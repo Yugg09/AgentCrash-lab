@@ -14,11 +14,11 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="mb-lg flex flex-wrap items-start justify-between gap-lg">
+    <header className="mb-xl flex flex-wrap items-start justify-between gap-lg">
       <div className="min-w-0 max-w-2xl">
         {kicker ? <p className="mb-xs text-caption-uppercase uppercase text-muted">{kicker}</p> : null}
-        <h1 className="font-display text-display-md text-ink sm:text-display-md">{title}</h1>
-        {description ? <div className="mt-sm text-body-md text-body">{description}</div> : null}
+        <h1 className="font-display text-display-md text-ink sm:text-display-lg">{title}</h1>
+        {description ? <div className="mt-sm text-body-lg text-body">{description}</div> : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-xs">{actions}</div> : null}
     </header>
@@ -42,11 +42,11 @@ export function Button({
 }) {
   const cls =
     variant === "primary"
-      ? "bg-primary text-on-primary hover:bg-primary-active disabled:bg-primary-disabled disabled:text-muted"
+      ? "bg-primary text-on-primary hover:bg-primary-active active:scale-[0.98] disabled:bg-primary-disabled disabled:text-muted"
       : variant === "danger"
-        ? "border border-error/25 bg-canvas text-error hover:bg-surface-soft"
-        : "border border-hairline bg-canvas text-ink hover:bg-surface-soft";
-  const shared = `inline-flex h-10 items-center rounded-md px-5 text-button transition-colors disabled:cursor-not-allowed ${cls}`;
+        ? "bg-surface-1 text-error hover:bg-surface-2"
+        : "bg-surface-1 text-ink hover:bg-surface-2";
+  const shared = `inline-flex h-11 items-center rounded-pill px-[15px] py-[10px] text-button transition-all disabled:cursor-not-allowed ${cls}`;
   if (to) {
     return (
       <Link to={to} className={shared} aria-disabled={disabled}>
@@ -69,13 +69,13 @@ export function Badge({
   tone?: "neutral" | "ok" | "warn" | "crit";
 }) {
   const map = {
-    neutral: "border-hairline bg-surface-card text-body",
-    ok: "border-success/25 bg-surface-soft text-success",
-    warn: "border-warning/25 bg-surface-soft text-warning",
-    crit: "border-error/25 bg-surface-soft text-error",
+    neutral: "bg-surface-2 text-muted",
+    ok: "bg-surface-2 text-success",
+    warn: "bg-surface-2 text-warning",
+    crit: "bg-surface-2 text-error",
   };
   return (
-    <span className={`inline-flex h-5 items-center rounded-pill border px-sm text-caption leading-none ${map[tone]}`}>
+    <span className={`inline-flex h-6 items-center rounded-pill px-sm text-caption leading-none ${map[tone]}`}>
       {children}
     </span>
   );
@@ -116,9 +116,9 @@ export function Section({
   padded?: boolean;
 }) {
   return (
-    <section className="overflow-hidden rounded-lg border border-hairline bg-surface-card">
+    <section className="overflow-hidden rounded-xl border border-hairline bg-surface-1">
       <header className="flex min-h-12 items-center justify-between border-b border-hairline px-md py-sm">
-        <h2 className="font-display text-title-sm text-ink">{title}</h2>
+        <h2 className="text-caption font-medium text-muted">{title}</h2>
         {action}
       </header>
       <div className={padded ? "p-md" : ""}>{children}</div>
@@ -140,10 +140,10 @@ export function Metric({
   const color =
     tone === "ok" ? "text-success" : tone === "crit" ? "text-error" : tone === "warn" ? "text-warning" : "text-ink";
   return (
-    <div className="rounded-lg border border-hairline bg-surface-card p-md">
+    <div className="rounded-xl border border-hairline bg-surface-1 p-md">
       <div className="text-caption text-muted">{label}</div>
-      <div className={`mt-xs font-display text-display-sm tabular-nums leading-none ${color}`}>{value}</div>
-      {hint ? <div className="mt-xs text-caption text-muted-soft">{hint}</div> : null}
+      <div className={`mt-xs font-display text-display-sm tabular-nums leading-none tracking-tight ${color}`}>{value}</div>
+      {hint ? <div className="mt-xs text-micro text-muted-soft">{hint}</div> : null}
     </div>
   );
 }
@@ -167,7 +167,7 @@ export function Select({
     <label className="inline-flex items-center gap-xs text-caption text-muted">
       {label}
       <select
-        className="h-10 rounded-md border border-hairline bg-canvas px-sm text-body-sm text-ink"
+        className="h-10 rounded-md border border-hairline bg-surface-1 px-sm text-body-sm text-ink"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >
@@ -192,7 +192,7 @@ export function Input({
     <label className="block text-caption text-muted">
       {label}
       <input
-        className="mt-xs h-10 w-full rounded-md border border-hairline bg-canvas px-sm text-body-sm text-ink placeholder:text-muted-soft"
+        className="mt-xs h-10 w-full rounded-md border border-hairline bg-surface-1 px-sm text-body-sm text-ink placeholder:text-muted-soft"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
@@ -204,7 +204,7 @@ export function Input({
 export function ErrorBanner({ error }: { error: string | null }) {
   if (!error) return null;
   return (
-    <div role="alert" className="mb-lg rounded-lg border border-error/25 bg-surface-soft px-md py-sm text-body-sm text-error">
+    <div role="alert" className="mb-lg rounded-xl border border-hairline bg-surface-1 px-md py-sm text-body-sm text-error">
       {error}
     </div>
   );
@@ -233,9 +233,7 @@ export function Table({ children }: { children: ReactNode }) {
 
 export function Th({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <th
-      className={`border-b border-hairline bg-surface-soft/80 px-md py-sm text-left text-caption-uppercase uppercase text-muted ${className}`}
-    >
+    <th className={`border-b border-hairline px-md py-sm text-left text-caption text-muted ${className}`}>
       {children}
     </th>
   );
@@ -244,7 +242,7 @@ export function Th({ children, className = "" }: { children: ReactNode; classNam
 export function Td({ children, className = "", mono = false }: { children: ReactNode; className?: string; mono?: boolean }) {
   return (
     <td
-      className={`border-b border-hairline px-md py-sm align-middle ${mono ? "font-mono text-code text-muted" : "text-ink"} ${className}`}
+      className={`border-b border-hairline-soft px-md py-sm align-middle ${mono ? "font-mono text-code text-muted" : "text-ink"} ${className}`}
     >
       {children}
     </td>
@@ -255,10 +253,10 @@ export function Td({ children, className = "", mono = false }: { children: React
 export const chartTooltip = {
   background: chartTheme.tooltip.background,
   border: `1px solid ${chartTheme.tooltip.border}`,
-  borderRadius: 8,
+  borderRadius: 10,
   fontSize: 13,
   color: chartTheme.tooltip.color,
-  boxShadow: "var(--shadow-hover)",
+  boxShadow: "var(--shadow-card)",
 };
 
 /** @deprecated Use chartTheme from lib/chart-theme.ts */
@@ -280,7 +278,7 @@ export function TextLink({
   className?: string;
 }) {
   return (
-    <Link to={to} className={`text-body-sm font-medium text-primary hover:text-primary-active ${className}`}>
+    <Link to={to} className={`text-body-sm font-medium text-accent hover:underline ${className}`}>
       {children}
     </Link>
   );
@@ -296,7 +294,7 @@ export function InlineLink({
   className?: string;
 }) {
   return (
-    <Link to={to} className={`font-medium text-ink hover:text-primary ${className}`}>
+    <Link to={to} className={`font-medium text-ink hover:text-accent ${className}`}>
       {children}
     </Link>
   );
@@ -304,7 +302,7 @@ export function InlineLink({
 
 export function CodeWindow({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`overflow-hidden rounded-lg bg-surface-dark ${className}`}>
+    <div className={`overflow-hidden rounded-xl border border-hairline bg-surface-dark-soft ${className}`}>
       <pre className="max-h-96 overflow-x-auto whitespace-pre-wrap bg-surface-dark-soft p-lg font-mono text-code leading-relaxed text-on-dark">
         {children}
       </pre>
@@ -321,14 +319,14 @@ export function FeatureCard({
   className?: string;
   to?: string;
 }) {
-  const cls = `block rounded-lg border border-hairline bg-surface-card p-lg transition-colors hover:border-primary/30 ${className}`;
+  const cls = `block rounded-xl border border-hairline bg-surface-1 p-lg transition-colors hover:border-white/[0.08] hover:bg-surface-2 ${className}`;
   if (to) return <Link to={to} className={cls}>{children}</Link>;
   return <div className={cls}>{children}</div>;
 }
 
 export function FilterBar({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`mb-lg flex flex-wrap gap-md rounded-lg border border-hairline bg-surface-soft p-md ${className}`}>
+    <div className={`mb-lg flex flex-wrap gap-md rounded-xl border border-hairline bg-surface-1 p-md ${className}`}>
       {children}
     </div>
   );
@@ -344,11 +342,19 @@ export function ReliabilityHero({
   children?: ReactNode;
 }) {
   return (
-    <div className="mb-lg rounded-lg border border-hairline bg-surface-card p-lg sm:p-xl">
-      <p className="text-caption-uppercase uppercase text-muted">{label}</p>
-      <div className="mt-sm flex flex-wrap items-end gap-xl">
-        <div className="font-display text-display-lg tabular-nums leading-none text-ink">{value}</div>
-        {children ? <div className="space-y-xs pb-xs text-body-sm text-body">{children}</div> : null}
+    <div className="relative mb-lg overflow-hidden rounded-xl border border-hairline bg-surface-1 p-lg sm:p-xl">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-25"
+        style={{
+          background: "radial-gradient(circle at 85% 15%, rgba(0,153,255,0.18), transparent 55%)",
+        }}
+      />
+      <div className="relative">
+        <p className="text-caption text-muted">{label}</p>
+        <div className="mt-sm flex flex-wrap items-end gap-xl">
+          <div className="font-display text-display-lg tabular-nums leading-none tracking-tight text-ink">{value}</div>
+          {children ? <div className="space-y-xs pb-xs text-body-sm text-body">{children}</div> : null}
+        </div>
       </div>
     </div>
   );
@@ -375,13 +381,9 @@ export function DarkSection({
   padded?: boolean;
 }) {
   return (
-    <section className="overflow-hidden rounded-lg bg-surface-dark">
-      <header className="flex min-h-12 items-center justify-between border-b border-surface-dark-elevated px-md py-sm">
-        <h2 className="font-display text-title-sm text-on-dark">{title}</h2>
-        {action}
-      </header>
-      <div className={padded ? "p-md" : ""}>{children}</div>
-    </section>
+    <Section title={title} action={action} padded={padded}>
+      {children}
+    </Section>
   );
 }
 
@@ -398,7 +400,7 @@ export function NativeSelect({
 }) {
   return (
     <select
-      className={`h-10 rounded-md border border-hairline bg-canvas px-sm font-mono text-code text-ink ${className}`}
+      className={`h-10 rounded-md border border-hairline bg-surface-1 px-sm font-mono text-code text-ink ${className}`}
       value={value}
       onChange={(e) => onChange(e.target.value)}
     >
@@ -407,7 +409,7 @@ export function NativeSelect({
   );
 }
 
-export const tableRowHover = "transition-colors hover:bg-surface-soft/80";
+export const tableRowHover = "transition-colors hover:bg-surface-2/50";
 
 export function ProgressBar({
   value,
@@ -417,9 +419,9 @@ export function ProgressBar({
   critical?: boolean;
 }) {
   return (
-    <div className="h-2 overflow-hidden rounded-pill bg-surface-soft">
+    <div className="h-1.5 overflow-hidden rounded-pill bg-canvas">
       <div
-        className={`h-full rounded-pill ${critical ? "bg-error" : "bg-ink/70"}`}
+        className={`h-full rounded-pill ${critical ? "bg-error/80" : "bg-accent/70"}`}
         style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
       />
     </div>

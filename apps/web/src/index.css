@@ -18,12 +18,14 @@
     font-family: var(--font-sans);
     font-size: var(--text-body-md-size);
     line-height: var(--text-body-md-leading);
+    font-feature-settings: "cv01", "cv05", "cv09", "cv11", "ss03";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+    background: rgba(0, 153, 255, 0.35);
+    color: var(--color-ink);
   }
 
   :focus-visible {
@@ -36,6 +38,6 @@
   textarea:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
-    border-color: var(--color-primary);
+    border-color: var(--color-accent-blue);
   }
 }

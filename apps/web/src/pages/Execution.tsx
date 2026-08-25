@@ -29,7 +29,7 @@ export function ExecutionPage() {
           <>
             <StatusBadge status={ex.status} />
             {ex.failure ? (
-              <TextLink to={`/failures/${ex.failure.id}`} className="text-error hover:text-error">
+              <TextLink to={`/failures/${ex.failure.id}`} className="text-error">
                 Open Failure DNA
               </TextLink>
             ) : null}

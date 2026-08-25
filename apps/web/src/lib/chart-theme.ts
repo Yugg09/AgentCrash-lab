@@ -3,15 +3,15 @@
  * Keep in sync with --chart-* tokens in src/styles/tokens.css
  */
 export const chartTheme = {
-  grid: "#e6dfd8",
-  axis: "#8e8b82",
-  line: "#141413",
-  accent: "#cc785c",
-  bar: "#141413",
-  barCritical: "#c64545",
+  grid: "#262626",
+  axis: "#666666",
+  line: "#ffffff",
+  accent: "#0099ff",
+  bar: "#ffffff",
+  barCritical: "#ef4444",
   tooltip: {
-    background: "#faf9f5",
-    border: "#e6dfd8",
-    color: "#141413",
+    background: "#141414",
+    border: "#262626",
+    color: "#ffffff",
   },
 } as const;
