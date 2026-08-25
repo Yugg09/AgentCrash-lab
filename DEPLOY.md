@@ -5,10 +5,11 @@ Deploy **AgentCrashLab** for **$0** using:
 | Service | Role | Free tier |
 | --- | --- | --- |
 | [Neon](https://neon.tech) | PostgreSQL | 0.5 GB, no credit card |
-| [Upstash](https://upstash.com) | Redis (BullMQ) | 10k commands/day |
-| [Render](https://render.com) | API + worker + frontend | 750 hrs/mo (sleeps after 15 min idle) |
+| [Render](https://render.com) | API + frontend | 750 hrs/mo (sleeps after 15 min idle) |
 
 You get **one live URL** — the API serves the built React app and `/api/*` on the same domain.
+
+**Redis is optional on Render.** Without `REDIS_URL`, test runs execute in-process in the API (no Upstash needed). For local dev, use Docker Redis + BullMQ worker as usual.
 
 ---
 
@@ -20,17 +21,9 @@ You get **one live URL** — the API serves the built React app and `/api/*` on 
 
 ---
 
-## 2. Upstash (Redis)
+## 2. Render (app)
 
-1. Sign up at [upstash.com](https://upstash.com)
-2. **Create database** → Redis → pick a region near you
-3. Copy the **Redis URL** (`rediss://...` is fine)
-
----
-
-## 3. Render (app)
-
-1. Push this repo to GitHub (already at `Yugg09/AgentCrash-lab`)
+1. Push this repo to GitHub
 2. [render.com](https://render.com) → **New** → **Blueprint**
 3. Connect the GitHub repo — Render reads `render.yaml`
 4. Set these **secret** env vars when prompted:
@@ -38,14 +31,16 @@ You get **one live URL** — the API serves the built React app and `/api/*` on 
 | Variable | Value |
 | --- | --- |
 | `DATABASE_URL` | Neon connection string |
-| `REDIS_URL` | Upstash **Redis** URL (`rediss://...`), not the REST API URL |
 | `GEMINI_API_KEY` | Optional — demo works without it (local fallback) |
 
-5. Click **Apply** and wait for the first deploy (~5–10 min)
+5. **Remove `REDIS_URL`** from Render if it was set previously (Upstash not required).
+6. Click **Apply** and wait for the first deploy (~5–10 min)
+
+`/api/health` should report `"jobDispatch": "in-process"` and `"redisConfigured": false`.
 
 ---
 
-## 4. Seed the database
+## 3. Seed the database
 
 **Render free tier has no Shell.** Use one of these:
 
@@ -65,7 +60,7 @@ Only run this once — re-running wipes existing runs and failures.
 
 ---
 
-## 5. Open your live link
+## 4. Open your live link
 
 Render gives you a URL like:
 
@@ -73,6 +68,7 @@ Render gives you a URL like:
 
 - **First visit after idle** may take 30–60s (free tier cold start)
 - Health check: `https://your-app.onrender.com/api/health`
+- Optional: ping `/api/health` every 10 min (e.g. cron-job.org) to reduce cold starts
 
 ---
 
@@ -82,13 +78,31 @@ Add `GEMINI_API_KEY` in Render env vars for LLM-powered scenario generation. Wit
 
 ---
 
+## Optional: Redis (local dev only)
+
+For `npm run dev` with BullMQ + a separate worker:
+
+```bash
+docker compose up -d redis
+```
+
+Set in local `.env`:
+
+```env
+REDIS_URL=redis://localhost:6379
+```
+
+Do **not** set this on Render unless you want queue-based dispatch and have a Redis provider.
+
+---
+
 ## Troubleshooting
 
 | Problem | Fix |
 | --- | --- |
-| Test runs stuck on **queued** | Check `/api/health` — `redis` must be `true`. Verify `REDIS_URL` is the Upstash **Redis** URL (`rediss://...`). Redeploy after fixing. |
+| Test runs stuck on **queued** | Check `/api/health`. If `jobDispatch` is `in-process`, the API should process runs without Redis. Redeploy latest code and remove `REDIS_URL` from Render. |
 | Empty dashboard | Redeploy (auto-seed) or run `DATABASE_URL=... npm run db:seed` locally |
-| 500 on API | Check `DATABASE_URL` and `REDIS_URL` in Render env vars |
+| 500 on API | Check `DATABASE_URL` in Render env vars |
 | Slow first load | Normal on Render free tier — service woke from sleep |
 
 ---

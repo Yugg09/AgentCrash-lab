@@ -13,6 +13,7 @@
     "@acl/evaluator-core": "*",
     "@acl/llm": "*",
     "@acl/shared": "*",
+    "@acl/worker": "*",
     "@prisma/client": "^6.5.0",
     "bullmq": "^5.44.0",
     "cors": "^2.8.5",

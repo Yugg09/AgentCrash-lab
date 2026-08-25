@@ -2,7 +2,7 @@ import { Router } from "express";
 import { createTestRunSchema } from "@acl/shared";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma.js";
-import { getTestRunQueue } from "../../lib/queue.js";
+import { dispatchTestRun } from "../../lib/dispatch-test-run.js";
 import { HttpError } from "../../lib/http-error.js";
 import { asyncHandler } from "../../middleware/error.js";
 
@@ -40,7 +40,7 @@ testRunsRouter.post(
       },
     });
 
-    await getTestRunQueue().add("run", { testRunId: testRun.id }, { removeOnComplete: 50, removeOnFail: 50 });
+    await dispatchTestRun(testRun.id);
     res.status(202).json({ testRun });
   }),
 );

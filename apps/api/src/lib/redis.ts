@@ -2,7 +2,10 @@ import { Redis } from "ioredis";
 import { parseRedisUrl } from "@acl/shared";
 
 export function createRedisConnection() {
-  const raw = process.env.REDIS_URL ?? "redis://localhost:6379";
+  const raw = process.env.REDIS_URL?.trim();
+  if (!raw) {
+    throw new Error("REDIS_URL is not set");
+  }
   const { host, port, username, password, tls } = parseRedisUrl(raw);
   const client = new Redis({
     host,

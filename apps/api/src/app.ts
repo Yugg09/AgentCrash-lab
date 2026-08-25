@@ -10,6 +10,7 @@ import { executionsRouter, failuresRouter } from "./modules/failures/routes.js";
 import { reliabilityRouter } from "./modules/reliability/routes.js";
 import { errorHandler } from "./middleware/error.js";
 import { prisma } from "./lib/prisma.js";
+import { isRedisEnabled } from "@acl/shared";
 import { getRedis } from "./lib/queue.js";
 
 export function createApp() {
@@ -18,17 +19,20 @@ export function createApp() {
   app.use(express.json({ limit: "1mb" }));
 
   app.get("/api/health", async (_req, res) => {
-    let redisOk = false;
-    const redisConfigured = Boolean(process.env.REDIS_URL);
-    try {
-      const pong = await getRedis().ping();
-      redisOk = pong === "PONG";
-    } catch {
-      redisOk = false;
+    const redisConfigured = isRedisEnabled();
+    let redisOk: boolean | null = null;
+    if (redisConfigured) {
+      try {
+        const pong = await getRedis().ping();
+        redisOk = pong === "PONG";
+      } catch {
+        redisOk = false;
+      }
     }
     res.json({
       ok: true,
       service: "agentcrashlab-api",
+      jobDispatch: redisConfigured ? "queue" : "in-process",
       redis: redisOk,
       redisConfigured,
       llm: getLlmService().status(),

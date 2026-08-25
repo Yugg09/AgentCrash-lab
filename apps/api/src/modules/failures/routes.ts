@@ -3,7 +3,7 @@ import { getLlmService } from "@acl/llm";
 import { mutateFailureSchema } from "@acl/shared";
 import { reproducibility } from "@acl/evaluator-core";
 import { prisma } from "../../lib/prisma.js";
-import { getTestRunQueue } from "../../lib/queue.js";
+import { dispatchTestRun } from "../../lib/dispatch-test-run.js";
 import { HttpError } from "../../lib/http-error.js";
 import { asyncHandler } from "../../middleware/error.js";
 
@@ -114,7 +114,7 @@ failuresRouter.post(
       },
     });
 
-    await getTestRunQueue().add("run", { testRunId: testRun.id });
+    await dispatchTestRun(testRun.id);
     res.status(202).json({
       testRun,
       scenarios,

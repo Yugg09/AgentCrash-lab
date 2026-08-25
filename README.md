@@ -39,9 +39,7 @@ The built-in demo is a **Customer Support Agent** with `search_order`, `cancel_o
 ```
 React UI  →  Express API  →  Postgres (runs, failures, traces)
                     ↓
-              Redis + BullMQ
-                    ↓
-              Worker (runs tests in sandbox)
+         In-process jobs (Render) or Redis + BullMQ worker (local dev)
                     ↓
          Deterministic rules + Gemini (optional)
 ```
@@ -51,7 +49,7 @@ React UI  →  Express API  →  Postgres (runs, failures, traces)
 | Frontend | React, Vite, TypeScript, Tailwind |
 | API | Node, Express, Zod |
 | Data | PostgreSQL, Prisma |
-| Queue | Redis, BullMQ |
+| Jobs | In-process on Render; optional Redis + BullMQ locally |
 | LLM | Google Gemini (`@google/genai`) with local fallback if quota/key is missing |
 
 Gemini is only used server-side for scenario generation, mutations, and nuanced scoring. Safety-critical checks (refund without confirmation, etc.) are deterministic.
@@ -92,7 +90,7 @@ npm run build
 | Variable | Notes |
 |----------|-------|
 | `DATABASE_URL` | Postgres connection string |
-| `REDIS_URL` | Redis for BullMQ |
+| `REDIS_URL` | Optional locally — Docker Redis for BullMQ worker (`npm run dev`) |
 | `GEMINI_API_KEY` | Optional. Server only. |
 | `GEMINI_MODEL` | Default: `gemini-2.5-flash` |
 | `VITE_API_URL` | Leave empty locally (Vite proxies `/api`) |
@@ -103,7 +101,7 @@ See `.env.example` for the full list.
 
 ## Deploy (free)
 
-We run frontend + API + worker on a single [Render](https://render.com) web service. Postgres on [Neon](https://neon.tech), Redis on [Upstash](https://upstash.com).
+We run frontend + API on a single [Render](https://render.com) web service. Postgres on [Neon](https://neon.tech). No Redis required on Render — test runs execute in the API process.
 
 Step-by-step: **[DEPLOY.md](./DEPLOY.md)**
 

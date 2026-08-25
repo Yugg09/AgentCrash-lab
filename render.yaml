@@ -1,4 +1,4 @@
-# Free-tier deploy: one Render web service + Neon Postgres + Upstash Redis.
+# Free-tier deploy: one Render web service + Neon Postgres (Redis optional).
 # See DEPLOY.md for setup steps.
 services:
   - type: web
@@ -12,8 +12,6 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        sync: false
-      - key: REDIS_URL
         sync: false
       - key: GEMINI_API_KEY
         sync: false

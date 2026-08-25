@@ -1,3 +1,8 @@
+/** True when REDIS_URL is set — enables BullMQ worker + queue dispatch. */
+export function isRedisEnabled(): boolean {
+  return Boolean(process.env.REDIS_URL?.trim());
+}
+
 export interface ParsedRedisUrl {
   host: string;
   port: number;
